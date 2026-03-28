@@ -1,6 +1,6 @@
 # Auditoría de Color
 
-Bookmarklet para analizar los colores que usa cualquier página web: fondos, texto, bordes y contornos. Muestra los colores en hex, OKLCH o en el formato que se encuentren, y muestra los colores sólidos y colores con transparencia por separado.
+Bookmarklet para analizar los colores que usa cualquier página web: ya sean los fondos, el texto, los bordes, los contornos... Muestra los colores en hex, OKLCH o en el formato que se encuentren y los separa entre colores sólidos y colores con transparencia.
 
 ## Requisitos
 

@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Auditoría de Color</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow: hidden;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  canvas#shader-bg {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+  }
+
+  .card {
+    position: relative;
+    z-index: 1;
+    background: white;
+    border-radius: 16px;
+    padding: 48px 44px 40px;
+    max-width: 460px;
+    width: 90%;
+    text-align: center;
+    box-shadow:
+      0 4px 24px rgba(0,0,0,0.12),
+      0 1px 3px rgba(0,0,0,0.08);
+  }
+
+  h1 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 2rem;
+    font-weight: 400;
+    color: #1a1a1a;
+    margin-bottom: 28px;
+    letter-spacing: -0.01em;
+  }
+
+  .bookmarklet-link {
+    display: inline-block;
+    padding: 14px 36px;
+    background: #1a1a1a;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: grab;
+    letter-spacing: 0.01em;
+    transition: background 0.25s, transform 0.2s;
+  }
+
+  .bookmarklet-link:hover {
+    background: #333;
+    transform: translateY(-1px);
+  }
+
+  .bookmarklet-link:active {
+    cursor: grabbing;
+    transform: scale(0.97);
+  }
+
+  .instruction {
+    font-size: 0.9rem;
+    color: #555;
+    line-height: 1.5;
+    margin-bottom: 24px;
+  }
+
+  .hint {
+    margin-top: 24px;
+    font-size: 0.85rem;
+    color: #888;
+    line-height: 1.55;
+  }
+</style>
+</head>
+<body>
+
+<canvas id="shader-bg"></canvas>
+
+<div class="card">
+  <h1>Auditoría de Color</h1>
+  <p class="instruction">Arrastra el botón a tu barra de marcadores para instalarlo.</p>
+  <a class="bookmarklet-link" href="javascript:%28function%28%29%7Bfunction%20showColorsUsedOnWebPage%28%29%7Blet%20e%3D%60%3Clink%20rel%3D%22preconnect%22%20href%3D%22https%3A%2F%2Ffonts.googleapis.com%22%3E%3Clink%20href%3D%22https%3A%2F%2Ffonts.googleapis.com%2Fcss2%3Ffamily%3DInstrument%2BSerif%26family%3DDM%2BSans%3Awght%40400%3B500%3B600%26display%3Dswap%22%20rel%3D%22stylesheet%22%3E%3Cstyle%3E.visually-hidden%20%7Bclip-path%3A%20inset%28100%25%29%3Bclip%3A%20rect%281px%2C%201px%2C%201px%2C%201px%29%3Bheight%3A%201px%3Boverflow%3A%20hidden%3Bposition%3A%20absolute%3Bwhite-space%3A%20nowrap%3Bwidth%3A%201px%3B%7D%23color-dialog%20%7Bfont-family%3A%27DM%20Sans%27%2Csans-serif%3Bfont-size%3A16px%3Bposition%3A%20fixed%3Btop%3A%2050%25%3Bleft%3A%2050%25%3Btransform%3A%20translate%28-50%25%2C%20-50%25%29%3Bbackground%3A%20white%3Bborder%3A%202px%20solid%20black%3Bborder-radius%3A16px%3Bpadding%3A%2020px%3Bz-index%3A%201000%3Bmax-width%3A%2080%25%3Bmax-height%3A%2080%25%3Boverflow%3A%20auto%3B%7D%23color-dialog%20h2%20%7Bfont-family%3A%27Instrument%20Serif%27%2Cserif%3Bfont-size%3A2rem%3Bfont-weight%3A400%3Bmargin-bottom%3A14px%3Bletter-spacing%3A-0.01em%3B%7D%23color-dialog%20h3%20%7Bfont-family%3A%27Instrument%20Serif%27%2Cserif%3Bfont-size%3A1.4rem%3Bfont-weight%3A400%3B%7D%23color-dialog%20h2%2C%20%23color-dialog%20h3%20%7Bfont-weight%3A400%3B%7D%23color-dialog%20h2%2C%20%23color-dialog%20h3%2C%20%23color-dialog%20p%20%7Bcolor%3Ablack%21important%3Bborder%3Anone%3Bpadding%3A0%3B%7D%23color-dialog%20li%20%7Blist-style%3Anone%3B%7D.color-swatches%20%7Bdisplay%3A%20flex%3Bflex-wrap%3A%20wrap%3Blist-style-type%3A%20none%3Bpadding%3A%200%3Bmargin%3A%200%3B%7D.color-swatch%20%7Bwidth%3A%20150px%3Bheight%3A%20180px%3Bmargin%3A%205px%3Bborder%3A%201px%20solid%20black%3Bborder-radius%3A8px%3Bposition%3A%20relative%3Btext-align%3A%20center%3Boverflow%3Ahidden%3B%7D.color-swatch-label%20%7Bposition%3A%20absolute%3Bbottom%3A%200%3Bleft%3A%200%3Bright%3A%200%3Bbackground%3A%20rgba%280%2C0%2C0%2C0.7%29%3Bcolor%3A%20white%3Bfont-size%3A%2012px%3Bpadding%3A%206px%208px%208px%3B%7D.color-swatch-label%2C.color-swatch-label%3Ediv%2C.color-swatch-label%3Espan%20%7Bfont-family%3A%27DM%20Sans%27%2Csans-serif%3Bfont-size%3A14px%3B%7D.copy-btn%20%7Bdisplay%3A%20block%3Bwidth%3A%20100%25%3Bmargin-top%3A%203px%3Bpadding%3A%202px%204px%3Bbackground%3A%20rgba%28255%2C255%2C255%2C0.15%29%3Bcolor%3A%20white%3Bborder%3A%201px%20solid%20rgba%28255%2C255%2C255%2C0.6%29%3Bfont-family%3A%27DM%20Sans%27%2Csans-serif%3Bfont-size%3A%2012px%3Bcursor%3A%20pointer%3Bborder-radius%3A%202px%3Bline-height%3A%201.4%3B%7D.copy-btn%3Ahover%20%7Bbackground%3A%20rgba%28255%2C255%2C255%2C0.3%29%3B%7D.copy-btn%3Afocus%20%7Boutline%3A%204px%20solid%20white%3Boutline-offset%3A%201px%3B%7D.color-section%20%7Bmargin-bottom%3A%2036px%3B%7D%23close-dialog%20%7Bposition%3Aabsolute%3Btop%3A12px%3Bright%3A12px%3Bwidth%3A36px%3Bheight%3A36px%3Bpadding%3A0%3Bbackground%3A%231a1a1a%3Bcolor%3A%23fff%21important%3Bborder%3Anone%3Bfont-size%3A1.3rem%3Bline-height%3A36px%3Btext-align%3Acenter%3Bcursor%3Apointer%3Bborder-radius%3A50%25%3Btransition%3Abackground%200.25s%2Ctransform%200.2s%3B%7D%23close-dialog%3Ahover%20%7Bbackground%3A%23333%3Btransform%3AtranslateY%28-1px%29%3B%7D%23close-dialog%3Afocus%20%7Boutline%3A4px%20solid%20%231a1a1a%3Boutline-offset%3A2px%3B%7D%23copy-all-btn%20%7Bdisplay%3Ainline-block%3Bmargin-top%3A16px%3Bpadding%3A14px%2036px%3Bbackground%3A%231a1a1a%3Bcolor%3A%23fff%3Bborder%3Anone%3Bfont-family%3A%27DM%20Sans%27%2Csans-serif%3Bfont-size%3A0.95rem%3Bfont-weight%3A600%3Bcursor%3Apointer%3Bborder-radius%3A10px%3Bletter-spacing%3A0.01em%3Btransition%3Abackground%200.25s%2Ctransform%200.2s%3B%7D%23copy-all-btn%3Ahover%20%7Bbackground%3A%23333%3Btransform%3AtranslateY%28-1px%29%3B%7D%23copy-all-btn%3Afocus%20%7Boutline%3A4px%20solid%20white%3Boutline-offset%3A2px%3B%7D%23copy-status%20%7Bmargin-top%3A%208px%3Bfont-size%3A%2014px%3Bcolor%3A%20black%3Bmin-height%3A%201.4em%3B%7D.checkerboard%20%7Bbackground-image%3A%20linear-gradient%2845deg%2C%20%23ccc%2025%25%2C%20transparent%2025%25%29%2C%20linear-gradient%28-45deg%2C%20%23ccc%2025%25%2C%20transparent%2025%25%29%2C%20linear-gradient%2845deg%2C%20transparent%2075%25%2C%20%23ccc%2075%25%29%2C%20linear-gradient%28-45deg%2C%20transparent%2075%25%2C%20%23ccc%2075%25%29%3Bbackground-size%3A%2020px%2020px%3Bbackground-position%3A%200%200%2C%200%2010px%2C%2010px%20-10px%2C%20-10px%200px%3B%7D%3C%2Fstyle%3E%60%3B%21function%20t%28%29%7Blet%20o%3D%5B%5D%2Cl%3D0%2Cr%3D%5B%5D%2Ca%3Ddocument.createElement%28%22div%22%29%3Ba.style.cssText%3D%60position%3A%20fixed%3Btop%3A%200%3Bleft%3A%200%3Bwidth%3A%20100%25%3Bheight%3A%20100%25%3Bbackground%3A%20rgba%280%2C0%2C0%2C0.5%29%3Bz-index%3A%20999%3B%60%3Blet%20i%3Ddocument.createElement%28%22div%22%29%3Bi.id%3D%22color-dialog%22%2Ci.setAttribute%28%22role%22%2C%22dialog%22%29%2Ci.setAttribute%28%22aria-modal%22%2C%22true%22%29%2Ci.setAttribute%28%22aria-labelledby%22%2C%22color-dialog-title%22%29%2Ci.innerHTML%3De%2B%60%3Cbutton%20id%3D%22close-dialog%22%20aria-label%3D%22Cerrar%22%3E%C3%97%3C%2Fbutton%3E%3Ch2%20id%3D%22color-dialog-title%22%3EAn%C3%A1lisis%20de%20Color%3C%2Fh2%3E%3Cdiv%20class%3D%22color-section%22%3E%3Ch3%3EColores%20S%C3%B3lidos%3C%2Fh3%3E%3Cul%20id%3D%22solid-colors%22%20class%3D%22color-swatches%22%3E%3C%2Ful%3E%3C%2Fdiv%3E%3Cdiv%20class%3D%22color-section%22%3E%3Ch3%3EColores%20con%20Transparencia%3C%2Fh3%3E%3Cul%20id%3D%22transparent-colors%22%20class%3D%22color-swatches%22%3E%3C%2Ful%3E%3C%2Fdiv%3E%3Cul%3E%3Cli%3ECuando%20los%20colores%20coinciden%20con%20nombres%20HTML%2C%20se%20incluyen%20debajo%20del%20valor%20hex.%3C%2Fli%3E%3Cli%3ELos%20colores%20s%C3%B3lidos%20son%20100%25%20opacos.%20Los%20transparentes%20muestran%20su%20porcentaje%20de%20opacidad.%3C%2Fli%3E%3C%2Ful%3E%3Cbutton%20id%3D%22copy-all-btn%22%3ECopiar%20todos%20los%20hex%3C%2Fbutton%3E%3Cdiv%20id%3D%22copy-status%22%20aria-live%3D%22polite%22%20aria-atomic%3D%22true%22%3E%3C%2Fdiv%3E%60%3Blet%20n%3D%7B%22%23F0F8FF%22%3A%22AliceBlue%22%2C%22%23FAEBD7%22%3A%22AntiqueWhite%22%2C%22%2300FFFF%22%3A%22Aqua%22%2C%22%237FFFD4%22%3A%22Aquamarine%22%2C%22%23F0FFFF%22%3A%22Azure%22%2C%22%23F5F5DC%22%3A%22Beige%22%2C%22%23FFE4C4%22%3A%22Bisque%22%2C%22%23000000%22%3A%22Black%22%2C%22%23FFEBCD%22%3A%22BlanchedAlmond%22%2C%22%230000FF%22%3A%22Blue%22%2C%22%238A2BE2%22%3A%22BlueViolet%22%2C%22%23A52A2A%22%3A%22Brown%22%2C%22%23DEB887%22%3A%22BurlyWood%22%2C%22%235F9EA0%22%3A%22CadetBlue%22%2C%22%237FFF00%22%3A%22Chartreuse%22%2C%22%23D2691E%22%3A%22Chocolate%22%2C%22%23FF7F50%22%3A%22Coral%22%2C%22%236495ED%22%3A%22CornflowerBlue%22%2C%22%23FFF8DC%22%3A%22Cornsilk%22%2C%22%23DC143C%22%3A%22Crimson%22%2C%22%2300FFFF%22%3A%22Cyan%22%2C%22%2300008B%22%3A%22DarkBlue%22%2C%22%23008B8B%22%3A%22DarkCyan%22%2C%22%23B8860B%22%3A%22DarkGoldenRod%22%2C%22%23A9A9A9%22%3A%22DarkGray%22%2C%22%23006400%22%3A%22DarkGreen%22%2C%22%23BDB76B%22%3A%22DarkKhaki%22%2C%22%238B008B%22%3A%22DarkMagenta%22%2C%22%23556B2F%22%3A%22DarkOliveGreen%22%2C%22%23FF8C00%22%3A%22DarkOrange%22%2C%22%239932CC%22%3A%22DarkOrchid%22%2C%22%238B0000%22%3A%22DarkRed%22%2C%22%23E9967A%22%3A%22DarkSalmon%22%2C%22%238FBC8F%22%3A%22DarkSeaGreen%22%2C%22%23483D8B%22%3A%22DarkSlateBlue%22%2C%22%232F4F4F%22%3A%22DarkSlateGray%22%2C%22%2300CED1%22%3A%22DarkTurquoise%22%2C%22%239400D3%22%3A%22DarkViolet%22%2C%22%23FF1493%22%3A%22DeepPink%22%2C%22%2300BFFF%22%3A%22DeepSkyBlue%22%2C%22%23696969%22%3A%22DimGray%22%2C%22%231E90FF%22%3A%22DodgerBlue%22%2C%22%23B22222%22%3A%22FireBrick%22%2C%22%23FFFAF0%22%3A%22FloralWhite%22%2C%22%23228B22%22%3A%22ForestGreen%22%2C%22%23FF00FF%22%3A%22Fuchsia%22%2C%22%23DCDCDC%22%3A%22Gainsboro%22%2C%22%23F8F8FF%22%3A%22GhostWhite%22%2C%22%23FFD700%22%3A%22Gold%22%2C%22%23DAA520%22%3A%22GoldenRod%22%2C%22%23808080%22%3A%22Gray%22%2C%22%23008000%22%3A%22Green%22%2C%22%23ADFF2F%22%3A%22GreenYellow%22%2C%22%23F0FFF0%22%3A%22HoneyDew%22%2C%22%23FF69B4%22%3A%22HotPink%22%2C%22%23CD5C5C%22%3A%22IndianRed%22%2C%22%234B0082%22%3A%22Indigo%22%2C%22%23FFFFF0%22%3A%22Ivory%22%2C%22%23F0E68C%22%3A%22Khaki%22%2C%22%23E6E6FA%22%3A%22Lavender%22%2C%22%23FFF0F5%22%3A%22LavenderBlush%22%2C%22%237CFC00%22%3A%22LawnGreen%22%2C%22%23FFFACD%22%3A%22LemonChiffon%22%2C%22%23ADD8E6%22%3A%22LightBlue%22%2C%22%23F08080%22%3A%22LightCoral%22%2C%22%23E0FFFF%22%3A%22LightCyan%22%2C%22%23FAFAD2%22%3A%22LightGoldenRodYellow%22%2C%22%23D3D3D3%22%3A%22LightGray%22%2C%22%2390EE90%22%3A%22LightGreen%22%2C%22%23FFB6C1%22%3A%22LightPink%22%2C%22%23FFA07A%22%3A%22LightSalmon%22%2C%22%2320B2AA%22%3A%22LightSeaGreen%22%2C%22%2387CEFA%22%3A%22LightSkyBlue%22%2C%22%23778899%22%3A%22LightSlateGray%22%2C%22%23B0C4DE%22%3A%22LightSteelBlue%22%2C%22%23FFFFE0%22%3A%22LightYellow%22%2C%22%2300FF00%22%3A%22Lime%22%2C%22%2332CD32%22%3A%22LimeGreen%22%2C%22%23FAF0E6%22%3A%22Linen%22%2C%22%23FF00FF%22%3A%22Magenta%22%2C%22%23800000%22%3A%22Maroon%22%2C%22%2366CDAA%22%3A%22MediumAquaMarine%22%2C%22%230000CD%22%3A%22MediumBlue%22%2C%22%23BA55D3%22%3A%22MediumOrchid%22%2C%22%239370DB%22%3A%22MediumPurple%22%2C%22%233CB371%22%3A%22MediumSeaGreen%22%2C%22%237B68EE%22%3A%22MediumSlateBlue%22%2C%22%2300FA9A%22%3A%22MediumSpringGreen%22%2C%22%2348D1CC%22%3A%22MediumTurquoise%22%2C%22%23C71585%22%3A%22MediumVioletRed%22%2C%22%23191970%22%3A%22MidnightBlue%22%2C%22%23F5FFFA%22%3A%22MintCream%22%2C%22%23FFE4E1%22%3A%22MistyRose%22%2C%22%23FFE4B5%22%3A%22Moccasin%22%2C%22%23FFDEAD%22%3A%22NavajoWhite%22%2C%22%23000080%22%3A%22Navy%22%2C%22%23FDF5E6%22%3A%22OldLace%22%2C%22%23808000%22%3A%22Olive%22%2C%22%236B8E23%22%3A%22OliveDrab%22%2C%22%23FFA500%22%3A%22Orange%22%2C%22%23FF4500%22%3A%22OrangeRed%22%2C%22%23DA70D6%22%3A%22Orchid%22%2C%22%23EEE8AA%22%3A%22PaleGoldenRod%22%2C%22%2398FB98%22%3A%22PaleGreen%22%2C%22%23AFEEEE%22%3A%22PaleTurquoise%22%2C%22%23DB7093%22%3A%22PaleVioletRed%22%2C%22%23FFEFD5%22%3A%22PapayaWhip%22%2C%22%23FFDAB9%22%3A%22PeachPuff%22%2C%22%23CD853F%22%3A%22Peru%22%2C%22%23FFC0CB%22%3A%22Pink%22%2C%22%23DDA0DD%22%3A%22Plum%22%2C%22%23B0E0E6%22%3A%22PowderBlue%22%2C%22%23800080%22%3A%22Purple%22%2C%22%23663399%22%3A%22RebeccaPurple%22%2C%22%23FF0000%22%3A%22Red%22%2C%22%23BC8F8F%22%3A%22RosyBrown%22%2C%22%234169E1%22%3A%22RoyalBlue%22%2C%22%238B4513%22%3A%22SaddleBrown%22%2C%22%23FA8072%22%3A%22Salmon%22%2C%22%23F4A460%22%3A%22SandyBrown%22%2C%22%232E8B57%22%3A%22SeaGreen%22%2C%22%23FFF5EE%22%3A%22SeaShell%22%2C%22%23A0522D%22%3A%22Sienna%22%2C%22%23C0C0C0%22%3A%22Silver%22%2C%22%2387CEEB%22%3A%22SkyBlue%22%2C%22%236A5ACD%22%3A%22SlateBlue%22%2C%22%23708090%22%3A%22SlateGray%22%2C%22%23FFFAFA%22%3A%22Snow%22%2C%22%2300FF7F%22%3A%22SpringGreen%22%2C%22%234682B4%22%3A%22SteelBlue%22%2C%22%23D2B48C%22%3A%22Tan%22%2C%22%23008080%22%3A%22Teal%22%2C%22%23D8BFD8%22%3A%22Thistle%22%2C%22%23FF6347%22%3A%22Tomato%22%2C%22%2340E0D0%22%3A%22Turquoise%22%2C%22%23EE82EE%22%3A%22Violet%22%2C%22%23F5DEB3%22%3A%22Wheat%22%2C%22%23FFFFFF%22%3A%22White%22%2C%22%23F5F5F5%22%3A%22WhiteSmoke%22%2C%22%23FFFF00%22%3A%22Yellow%22%2C%22%239ACD32%22%3A%22YellowGreen%22%7D%3Bfunction%20d%28e%2Ct%2Co%2Cl%29%7Bnavigator.clipboard.writeText%28e%29.then%28%28%29%3D%3E%7Bt%26%26%28t.textContent%3D%60Copiado%20%24%7Be%7D%60%2CsetTimeout%28%28%29%3D%3E%7Bt.textContent%3D%22%22%7D%2C1500%29%29%2Co%26%26%28o.textContent%3D%22%C2%A1Copiado%21%22%2CsetTimeout%28%28%29%3D%3E%7Bo.textContent%3Dl%7D%2C1500%29%29%7D%29.catch%28%28%29%3D%3E%7Blet%20r%3Ddocument.createElement%28%22textarea%22%29%3Br.value%3De%2Cr.style.position%3D%22fixed%22%2Cr.style.opacity%3D%220%22%2Cdocument.body.appendChild%28r%29%2Cr.focus%28%29%2Cr.select%28%29%3Btry%7Bdocument.execCommand%28%22copy%22%29%7Dcatch%28a%29%7B%7Ddocument.body.removeChild%28r%29%2Ct%26%26%28t.textContent%3D%60Copiado%20%24%7Be%7D%60%2CsetTimeout%28%28%29%3D%3E%7Bt.textContent%3D%22%22%7D%2C1500%29%29%2Co%26%26%28o.textContent%3D%22%C2%A1Copiado%21%22%2CsetTimeout%28%28%29%3D%3E%7Bo.textContent%3Dl%7D%2C1500%29%29%7D%29%7Dfunction%20isTransparent%28e%29%7Breturn%28e.startsWith%28%22rgba%28%22%29%7C%7Ce.includes%28%22%2F%22%29%29%26%26%21e.endsWith%28%22%2C%201%29%22%29%26%26%21e.endsWith%28%22%2F%201%29%22%29%7Dfunction%20%24%28e%29%7Blet%20t%3Dfunction%20e%28t%29%7Bif%28%21t.startsWith%28%22rgb%22%29%29%7Blet%20o%3Ddocument.createElement%28%22canvas%22%29.getContext%28%222d%22%29%3Breturn%20o.fillStyle%3Dt%2Co.fillStyle.toUpperCase%28%29%7Dlet%20l%3Dt.match%28%2F%5Ergba%3F%5C%28%28%5Cd%2B%29%2C%5Cs%2A%28%5Cd%2B%29%2C%5Cs%2A%28%5Cd%2B%29%28%3F%3A%2C%5Cs%2A%28%5Cd%2B%28%3F%3A%5C.%5Cd%2B%29%3F%29%29%3F%5C%29%24%2F%29%3Bif%28%21l%29return%20t%3Blet%20r%3DparseInt%28l%5B1%5D%29%2Ca%3DparseInt%28l%5B2%5D%29%2Cb%3DparseInt%28l%5B3%5D%29%3Breturn%60%23%24%7Br.toString%2816%29.padStart%282%2C%220%22%29%7D%24%7Ba.toString%2816%29.padStart%282%2C%220%22%29%7D%24%7Bb.toString%2816%29.padStart%282%2C%220%22%29%7D%60.toUpperCase%28%29%7D%28e%29%2C%7Br%3Ao%2Cg%3Aa%2Cb%3A%24%7D%3Dfunction%20e%28t%29%7Blet%20o%3Ddocument.createElement%28%22canvas%22%29.getContext%28%222d%22%29%3Bo.fillStyle%3Dt%3Blet%20l%3Do.fillStyle%2Cr%2Ca%2Ci%3Bif%28l.startsWith%28%22%23%22%29%29r%3DparseInt%28l.slice%281%2C3%29%2C16%29%2Ca%3DparseInt%28l.slice%283%2C5%29%2C16%29%2Ci%3DparseInt%28l.slice%285%2C7%29%2C16%29%3Belse%7Blet%20n%3Dl.match%28%2F%5Ergba%3F%5C%28%28%5Cd%2B%29%2C%5Cs%2A%28%5Cd%2B%29%2C%5Cs%2A%28%5Cd%2B%29%2F%29%3Bif%28%21n%29n%3Dl.match%28%2F%5Ergba%3F%5C%28%28%5Cd%2B%29%5Cs%2B%28%5Cd%2B%29%5Cs%2B%28%5Cd%2B%29%2F%29%3Bn%26%26%28%5B%2Cr%2Ca%2Ci%5D%3Dn.map%28Number%29%29%7Dreturn%7Br%2Cg%3Aa%2Cb%3Ai%7D%7D%28e%29%2Cs%3Dfunction%20e%28t%2Co%2Cl%29%7Blet%20r%3D%28299%2At%2B587%2Ao%2B114%2Al%29%2F1e3%2Ca%3D%22%22%3Bif%28a%3Dr%3C64%3F%22dark%22%3Ar%3C128%3F%22medium%22%3Ar%3C192%3F%22light%22%3A%22bright%22%2C40%3EMath.abs%28t-o%29%26%2640%3EMath.abs%28o-l%29%26%2640%3EMath.abs%28t-l%29%29return%20r%3C32%3F%22black%22%3Ar%3E224%3F%22pure%20white%22%3A%60%24%7Ba%7D%20gray%60%3Blet%20i%3D%5B%5D%3Breturn%28t%3Eo%26%26t%3El%26%26t%3E40%26%26i.push%28%22red%22%29%2Co%3Et%26%26o%3El%26%26o%3E40%26%26i.push%28%22green%22%29%2Cl%3Et%26%26l%3Eo%26%26l%3E40%26%26i.push%28%22blue%22%29%2C40%3EMath.abs%28t-o%29%26%26t%3El%26%26o%3El%26%26i.push%28%22yellow%22%29%2C40%3EMath.abs%28t-l%29%26%26t%3Eo%26%26l%3Eo%26%26i.push%28%22magenta%22%29%2C40%3EMath.abs%28o-l%29%26%26o%3Et%26%26l%3Et%26%26i.push%28%22cyan%22%29%2C0%3D%3D%3Di.length%29%3F%60%24%7Ba%7D%20gray%60%3A1%3D%3D%3Di.length%3F%60%24%7Ba%7D%20%24%7Bi%5B0%5D%7D%60%3A%60%24%7Ba%7D%20%24%7Bi.join%28%22-%22%29%7D%60%7D%28o%2Ca%2C%24%29%2Cc%3Dn%5Bt%5D%3Br.includes%28t%29%7C%7Cr.push%28t%29%3Blet%20u%3D%60color-swatch-label-%24%7Bl%2B%2B%7D%60%2CF%3Ddocument.createElement%28%22li%22%29%3BF.className%3D%22color-swatch%22%3Bif%28isTransparent%28e%29%29%7BF.classList.add%28%22checkerboard%22%29%7DF.style.backgroundColor%3De%3Blet%20p%3Ddocument.createElement%28%22div%22%29%3Bp.className%3D%22color-swatch-label%22%3Blet%20h%3D%28e%3D%3E%7Bif%28e.startsWith%28%22rgb%28%22%29%29return%22100%25%22%3Blet%20t%3De.match%28%2F%2C%5Cs%2A%28%5B%5Cd.%5D%2B%29%5C%29%2F%29%3Bif%28%21t%29%7Blet%20m2%3De.match%28%2F%5C%2F%5Cs%2A%28%5B%5Cd.%5D%2B%29%5Cs%2A%5C%29%2F%29%3Breturn%20m2%3F100%2AparseFloat%28m2%5B1%5D%29%2B%22%25%22%3A%22100%25%22%7Dreturn%20100%2AparseFloat%28t%5B1%5D%29%2B%22%25%22%7D%29%28e%29%3Bp.innerHTML%3D%60%3Cdiv%20id%3D%22%24%7Bu%7D%22%3E%24%7Bt%7D%3C%2Fdiv%3E%24%7Bc%3F%60%3Cdiv%3E%24%7Bc%7D%3C%2Fdiv%3E%60%3A%60%3Cspan%20class%3D%22visually-hidden%22%3E%20%24%7Bs%7D%3C%2Fspan%3E%60%7D%24%7B%22100%25%22%21%3D%3Dh%3F%60%3Cdiv%3E%24%7Bh%7D%3C%2Fdiv%3E%60%3A%22%22%7D%60%3Blet%20g%3Ddocument.createElement%28%22button%22%29%3Breturn%20g.className%3D%22copy-btn%22%2Cg.textContent%3D%22Copiar%22%2Cg.setAttribute%28%22aria-labelledby%22%2Cu%29%2Cg.addEventListener%28%22click%22%2C%28%29%3D%3E%7Blet%20e%3Di.querySelector%28%22%23copy-status%22%29%3Bd%28t%2Ce%2Cg%2C%22Copiar%22%29%7D%29%2Cp.appendChild%28g%29%2CF.appendChild%28p%29%2CF%7Dlet%20allColors%3Dnew%20Set%3Bdocument.querySelectorAll%28%22%2A%22%29.forEach%28e%3D%3E%7Blet%20t%3Dwindow.getComputedStyle%28e%29%2Co%3Dt.backgroundColor%3B%22rgba%280%2C%200%2C%200%2C%200%29%22%21%3D%3Do%26%26%22transparent%22%21%3D%3Do%26%26allColors.add%28o%29%3Blet%20l%3Dt.color%3B%22rgba%280%2C%200%2C%200%2C%200%29%22%21%3D%3Dl%26%26%22transparent%22%21%3D%3Dl%26%26allColors.add%28l%29%2C%5Bt.borderTopColor%2Ct.borderRightColor%2Ct.borderBottomColor%2Ct.borderLeftColor%5D.forEach%28e%3D%3E%7B%22rgba%280%2C%200%2C%200%2C%200%29%22%21%3D%3De%26%26%22transparent%22%21%3D%3De%26%26allColors.add%28e%29%7D%29%3Blet%20r%3Dt.outlineColor%3B%22rgba%280%2C%200%2C%200%2C%200%29%22%21%3D%3Dr%26%26%22transparent%22%21%3D%3Dr%26%26allColors.add%28r%29%7D%29%3Blet%20solidList%3Di.querySelector%28%22%23solid-colors%22%29%3Blet%20transparentList%3Di.querySelector%28%22%23transparent-colors%22%29%3BArray.from%28allColors%29.forEach%28e%3D%3E%7Bif%28isTransparent%28e%29%29%7BtransparentList.appendChild%28%24%28e%29%29%7Delse%7BsolidList.appendChild%28%24%28e%29%29%7D%7D%29%3Blet%20F%3Di.querySelector%28%22%23copy-all-btn%22%29%3BF.addEventListener%28%22click%22%2C%28%29%3D%3E%7Blet%20e%3Di.querySelector%28%22%23copy-status%22%29%2Ct%3Dr.join%28%22%5Cn%22%29%3Bd%28t%2Cnull%2CF%2C%22Copiar%20todos%20los%20hex%22%29%2Ce.textContent%3D%60Copiado%20%24%7Br.length%7D%20valores%20hex%60%2CsetTimeout%28%28%29%3D%3E%7Be.textContent%3D%22%22%7D%2C1500%29%7D%29%3Blet%20p%3Di.querySelector%28%22%23close-dialog%22%29%3Bfunction%20h%28%29%7Bdocument.body.removeChild%28a%29%2Cdocument.body.removeChild%28i%29%2Co.forEach%28e%3D%3E%7Be.removeAttribute%28%22aria-hidden%22%29%2Ce.removeAttribute%28%22inert%22%29%7D%29%2Cy.focus%28%29%7Dp.addEventListener%28%22click%22%2Ch%29%3Blet%20g%3Di.querySelectorAll%28%27button%2C%20%5Bhref%5D%2C%20input%2C%20select%2C%20textarea%2C%20%5Btabindex%5D%3Anot%28%5Btabindex%3D%22-1%22%5D%29%27%29%2Cb%3Dg%5B0%5D%2CC%3Dg%5Bg.length-1%5D%3Bi.addEventListener%28%22keydown%22%2Ce%3D%3E%7B%22Escape%22%3D%3D%3De.key%26%26h%28%29%2C%22Tab%22%21%3D%3De.key%7C%7C%28e.shiftKey%26%26document.activeElement%3D%3D%3Db%3F%28C.focus%28%29%2Ce.preventDefault%28%29%29%3Ae.shiftKey%7C%7Cdocument.activeElement%21%3D%3DC%7C%7C%28b.focus%28%29%2Ce.preventDefault%28%29%29%29%7D%29%2Ca.setAttribute%28%22aria-hidden%22%2C%22true%22%29%2CArray.from%28document.body.children%29.forEach%28e%3D%3E%7Be%21%3D%3Da%26%26e%21%3D%3Di%26%26%28e.setAttribute%28%22aria-hidden%22%2C%22true%22%29%2Ce.setAttribute%28%22inert%22%2C%22%22%29%2Co.push%28e%29%29%7D%29%3Blet%20y%3Ddocument.activeElement%3Bdocument.body.appendChild%28a%29%2Cdocument.body.appendChild%28i%29%2Ci.focus%28%29%7D%28%29%7DshowColorsUsedOnWebPage%28%29%7D%29%28%29">Auditor de color</a>
+  <p class="hint">Para analizar los colores de cualquier página, haz clic en el marcador.</p>
+</div>
+
+<script>
+const canvas = document.getElementById('shader-bg');
+const gl = canvas.getContext('webgl');
+
+function resize() {
+  canvas.width = window.innerWidth * devicePixelRatio;
+  canvas.height = window.innerHeight * devicePixelRatio;
+  gl.viewport(0, 0, canvas.width, canvas.height);
+}
+resize();
+window.addEventListener('resize', resize);
+
+const vertSrc = `
+  attribute vec2 pos;
+  void main() { gl_Position = vec4(pos, 0.0, 1.0); }
+`;
+
+const fragSrc = `
+  precision highp float;
+  uniform float u_time;
+  uniform vec2 u_res;
+
+  vec3 mod289(vec3 x) { return x - floor(x * (1.0/289.0)) * 289.0; }
+  vec2 mod289(vec2 x) { return x - floor(x * (1.0/289.0)) * 289.0; }
+  vec3 permute(vec3 x) { return mod289(((x*34.0)+1.0)*x); }
+
+  float snoise(vec2 v) {
+    const vec4 C = vec4(0.211324865405187, 0.366025403784439,
+                       -0.577350269189626, 0.024390243902439);
+    vec2 i = floor(v + dot(v, C.yy));
+    vec2 x0 = v - i + dot(i, C.xx);
+    vec2 i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
+    vec4 x12 = x0.xyxy + C.xxzz;
+    x12.xy -= i1;
+    i = mod289(i);
+    vec3 p = permute(permute(i.y + vec3(0.0, i1.y, 1.0)) + i.x + vec3(0.0, i1.x, 1.0));
+    vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy), dot(x12.zw,x12.zw)), 0.0);
+    m = m*m; m = m*m;
+    vec3 x = 2.0 * fract(p * C.www) - 1.0;
+    vec3 h = abs(x) - 0.5;
+    vec3 ox = floor(x + 0.5);
+    vec3 a0 = x - ox;
+    m *= 1.79284291400159 - 0.85373472095314 * (a0*a0 + h*h);
+    vec3 g;
+    g.x = a0.x * x0.x + h.x * x0.y;
+    g.yz = a0.yz * x12.xz + h.yz * x12.yw;
+    return 130.0 * dot(m, g);
+  }
+
+  void main() {
+    vec2 uv = gl_FragCoord.xy / u_res;
+    float t = u_time * 0.15;
+
+    float n1 = snoise(uv * 0.8 + vec2(t * 0.25, t * 0.18));
+    float n2 = snoise(uv * 1.4 - vec2(t * 0.15, t * 0.3));
+    float n3 = snoise(uv * 2.0 + vec2(t * 0.1, -t * 0.2));
+
+    float blend = (n1 + n2 * 0.6 + n3 * 0.3) * 0.5 + 0.5;
+
+    vec3 c1 = vec3(0.04, 0.08, 0.18);  // deep navy
+    vec3 c2 = vec3(0.06, 0.28, 0.50);  // ocean blue
+    vec3 c3 = vec3(0.12, 0.45, 0.62);  // bright ocean
+    vec3 c4 = vec3(0.03, 0.12, 0.28);  // dark blue
+
+    vec3 col;
+    if (blend < 0.33) {
+      col = mix(c1, c2, blend / 0.33);
+    } else if (blend < 0.66) {
+      col = mix(c2, c3, (blend - 0.33) / 0.33);
+    } else {
+      col = mix(c3, c4, (blend - 0.66) / 0.34);
+    }
+
+    float vig = 1.0 - 0.3 * length((uv - 0.5) * 1.4);
+    col *= vig;
+
+    gl_FragColor = vec4(col, 1.0);
+  }
+`;
+
+function compile(type, src) {
+  const s = gl.createShader(type);
+  gl.shaderSource(s, src);
+  gl.compileShader(s);
+  return s;
+}
+
+const prog = gl.createProgram();
+gl.attachShader(prog, compile(gl.VERTEX_SHADER, vertSrc));
+gl.attachShader(prog, compile(gl.FRAGMENT_SHADER, fragSrc));
+gl.linkProgram(prog);
+gl.useProgram(prog);
+
+const buf = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
+
+const posLoc = gl.getAttribLocation(prog, 'pos');
+gl.enableVertexAttribArray(posLoc);
+gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
+
+const uTime = gl.getUniformLocation(prog, 'u_time');
+const uRes = gl.getUniformLocation(prog, 'u_res');
+
+function draw(t) {
+  gl.uniform1f(uTime, t * 0.001);
+  gl.uniform2f(uRes, canvas.width, canvas.height);
+  gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+  requestAnimationFrame(draw);
+}
+requestAnimationFrame(draw);
+</script>
+</body>
+</html>

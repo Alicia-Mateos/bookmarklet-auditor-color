@@ -33,6 +33,24 @@ Bookmarklet para analizar los colores que usa cualquier página web: ya sean los
 - Normaliza a hex y etiqueta con nombres de color HTML cuando coinciden.
 - Añade una descripción aproximada del matiz (p. ej. tonos de gris, dominancia RGB) para accesibilidad y contexto.
 
+## Siguientes pasos recomendados (Figma)
+
+Una vez que hayas copiado todos los colores desde el bookmarklet, el siguiente paso es llevarlos a una herramienta de diseño para analizarlos y organizarlos mejor:
+
+1. Abre Figma (por ejemplo) y crea o accede a un archivo de trabajo.
+2. Utiliza el plugin Pallete’r (aunque puedes usar cualquier otro plugin similar).
+3. Pega todos los códigos hexadecimales en el campo de entrada separados por comas para asegurar que se procesen correctamente.
+4. En la sección Variations selecciona No variations para evitar que se generen tonos adicionales automáticamente.
+5. En Add ons puedes añadir información extra como RGB, CMYK o HSL si lo necesitas.
+6. Haz clic en Create.
+
+De esta forma, se generarán automáticamente cards de color dentro del lienzo de Figma, lo que te permitirá:
+- Visualizar todos los colores detectados
+- Organizarlos fácilmente
+- Empezar a limpiarlos, agruparlos o construir un sistema de color consistente
+
+
+
 ## Limitaciones
 
 - Solo ve colores aplicados vía **CSS computado** en el DOM; no analiza imágenes, vídeos ni canvas como bitmap.
@@ -42,5 +60,3 @@ Bookmarklet para analizar los colores que usa cualquier página web: ya sean los
 ## Privacidad
 
 El script se ejecuta **solo en tu navegador** en la página donde activas el marcador. No hay servidor propio ni envío de datos a terceros por parte de este proyecto (salvo la carga opcional de fuentes de Google al mostrar el panel).
-
-
